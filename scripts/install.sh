@@ -10,14 +10,14 @@ agents_dir="$HOME/.omp/agent/agents"
 skills_dir="$HOME/.omp/agent/skills"
 
 uninstall=0
-[ "${1:-}" = "--uninstall" ] && uninstall=1
+if [ "${1:-}" = "--uninstall" ]; then uninstall=1; fi
 
 link_one() { # src dst
   if [ -L "$2" ] && [ "$(readlink "$2")" = "$1" ]; then
-    [ "$uninstall" = 1 ] && { rm "$2"; echo "removed $2"; }
+    if [ "$uninstall" = 1 ]; then rm "$2"; echo "removed $2"; fi
     return
   fi
-  [ "$uninstall" = 1 ] && return
+  if [ "$uninstall" = 1 ]; then return; fi
   if [ -e "$2" ] || [ -L "$2" ]; then
     echo "SKIP $2 (exists, not ours)"; return
   fi
@@ -31,4 +31,4 @@ done
 for d in "$root"/.omp/skills/*/; do
   link_one "${d%/}" "$skills_dir/$(basename "$d")"
 done
-[ "$uninstall" = 0 ] && echo "Done. Restart omp (or open a new session) to pick up the companions."
+if [ "$uninstall" = 0 ]; then echo "Done. Restart omp (or open a new session) to pick up the companions."; fi
